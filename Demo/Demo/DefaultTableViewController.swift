@@ -32,7 +32,7 @@ class DefaultTableViewController:UITableViewController{
                     return;
                 }
                 vc.models = vc.originalModes.map{_ in random100()}
-                vc.tableView.switchRefreshHeader(to: .normal(.success, 0.5))
+                vc.tableView.switchRefreshHeader(to: .normal(.success, 0.0))
                 vc.tableView.reloadData()
             })
         }

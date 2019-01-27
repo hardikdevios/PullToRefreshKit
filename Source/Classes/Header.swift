@@ -106,7 +106,7 @@ open class DefaultRefreshHeader: UIView, RefreshableHeader {
     #endif
     public let textLabel:UILabel = UILabel(frame: CGRect(x: 0,y: 0,width: 140,height: 40))
     public let imageView:UIImageView = UIImageView(frame: CGRect.zero)
-    open var durationWhenHide = 0.5
+    open var durationWhenHide = 0.0
     fileprivate var textDic = [RefreshKitHeaderText:String]()
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -226,7 +226,7 @@ open class RefreshHeaderContainer:UIView{
     var refreshAction:(()->())?
     var attachedScrollView:UIScrollView!
     var originalInset:UIEdgeInsets?
-    var durationOfEndRefreshing = 0.4
+    open var durationOfEndRefreshing = 0.0
     weak var delegate:RefreshableHeader?
     fileprivate var currentResult:RefreshResult = .none
     fileprivate var _state:RefreshHeaderState = .idle
@@ -411,12 +411,18 @@ open class RefreshHeaderContainer:UIView{
     }
     func endRefreshing(_ result:RefreshResult,delay:TimeInterval = 0.0){
         self.delegate?.didBeginHideAnimation(result)
-        self.delayTimer = Timer(timeInterval: delay, target: self, selector: #selector(RefreshHeaderContainer.updateStateToIdea), userInfo: nil, repeats: false)
-        #if swift(>=4.2)
-        RunLoop.main.add(self.delayTimer!, forMode: RunLoop.Mode.common)
-        #else
-        RunLoop.main.add(self.delayTimer!, forMode: RunLoopMode.commonModes)
-        #endif
+        if delay > 0 {
+            self.delayTimer = Timer(timeInterval: delay, target: self, selector: #selector(RefreshHeaderContainer.updateStateToIdea), userInfo: nil, repeats: false)
+            #if swift(>=4.2)
+            RunLoop.main.add(self.delayTimer!, forMode: RunLoop.Mode.common)
+            #else
+            RunLoop.main.add(self.delayTimer!, forMode: RunLoopMode.commonModes)
+            #endif
+        }else {
+            
+            self.updateStateToIdea()
+        }
+       
     }
     func clearTimer(){
         if self.delayTimer != nil{
